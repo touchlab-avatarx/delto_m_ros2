@@ -42,7 +42,7 @@
 namespace delto_hardware {
 
 hardware_interface::SystemInterface::CallbackReturn SystemInterface::on_init(
-    const hardware_interface::HardwareInfo& info) {
+    const hardware_interface::HardwareComponentInterfaceParams& info) {
   if (hardware_interface::SystemInterface::CallbackReturn::SUCCESS !=
       hardware_interface::SystemInterface::on_init(info)) {
     return CallbackReturn::ERROR;
@@ -90,38 +90,38 @@ hardware_interface::SystemInterface::CallbackReturn SystemInterface::on_init(
   io_enabled_ = false;
 
   // Get parameters from hardware info
-  if (info.hardware_parameters.find("delto_ip") != info.hardware_parameters.end()) {
-    delto_ip_ = info.hardware_parameters.at("delto_ip");
+  if (info.hardware_info.hardware_parameters.find("delto_ip") != info.hardware_info.hardware_parameters.end()) {
+    delto_ip_ = info.hardware_info.hardware_parameters.at("delto_ip");
   }
 
-  if (info.hardware_parameters.find("delto_port") != info.hardware_parameters.end()) {
+  if (info.hardware_info.hardware_parameters.find("delto_port") != info.hardware_info.hardware_parameters.end()) {
     try {
-      delto_port_ = std::stoi(info.hardware_parameters.at("delto_port"));
+      delto_port_ = std::stoi(info.hardware_info.hardware_parameters.at("delto_port"));
     } catch (...) {
       RCLCPP_WARN(rclcpp::get_logger("SystemInterface"),
                   "Invalid port parameter, using default: %d", delto_port_);
     }
   }
 
-  if (info.hardware_parameters.find("delto_model") != info.hardware_parameters.end()) {
+  if (info.hardware_info.hardware_parameters.find("delto_model") != info.hardware_info.hardware_parameters.end()) {
     try {
-      model_ = static_cast<uint16_t>(std::stoi(info.hardware_parameters.at("delto_model")));
+      model_ = static_cast<uint16_t>(std::stoi(info.hardware_info.hardware_parameters.at("delto_model")));
     } catch (...) {
       RCLCPP_WARN(rclcpp::get_logger("SystemInterface"),
                   "Invalid model parameter, using default: 0x%X", model_);
     }
   }
 
-  if (info.hardware_parameters.find("hand_type") != info.hardware_parameters.end()) {
-    hand_type_ = info.hardware_parameters.at("hand_type");
+  if (info.hardware_info.hardware_parameters.find("hand_type") != info.hardware_info.hardware_parameters.end()) {
+    hand_type_ = info.hardware_info.hardware_parameters.at("hand_type");
   }
 
-  if (info.hardware_parameters.find("fingertip_sensor") != info.hardware_parameters.end()) {
-    fingertip_sensor_enabled_ = info.hardware_parameters.at("fingertip_sensor") == "true";
+  if (info.hardware_info.hardware_parameters.find("fingertip_sensor") != info.hardware_info.hardware_parameters.end()) {
+    fingertip_sensor_enabled_ = info.hardware_info.hardware_parameters.at("fingertip_sensor") == "true";
   }
 
-  if (info.hardware_parameters.find("IO") != info.hardware_parameters.end()) {
-    io_enabled_ = info.hardware_parameters.at("IO") == "true";
+  if (info.hardware_info.hardware_parameters.find("IO") != info.hardware_info.hardware_parameters.end()) {
+    io_enabled_ = info.hardware_info.hardware_parameters.at("IO") == "true";
   }
 
   // Initialize model-specific settings
