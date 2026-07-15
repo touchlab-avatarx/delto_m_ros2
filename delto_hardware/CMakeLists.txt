@@ -17,10 +17,20 @@ find_package(std_srvs REQUIRED)
 find_package(delto_tcp_comm REQUIRED)
 find_package(Boost REQUIRED COMPONENTS system)
 
+# Select vendor delto_gripper_helper library for the target architecture
+if(CMAKE_SYSTEM_PROCESSOR MATCHES "^(aarch64|arm64)$")
+  # NOTE: vendor build provenance/version unconfirmed for ARM64 - confirm before production use.
+  set(GRIPPER_HELPER_LIB ${CMAKE_CURRENT_SOURCE_DIR}/lib/aarch64/libdelto_gripper_helper.so)
+elseif(CMAKE_SYSTEM_PROCESSOR MATCHES "^(x86_64|amd64)$")
+  set(GRIPPER_HELPER_LIB ${CMAKE_CURRENT_SOURCE_DIR}/lib/x86_64/libdelto_gripper_helper.so)
+else()
+  message(FATAL_ERROR "delto_hardware: no vendor delto_gripper_helper library for architecture '${CMAKE_SYSTEM_PROCESSOR}'")
+endif()
+
 # Import delto_gripper_helper library (shared across all drivers)
 add_library(delto_gripper_helper SHARED IMPORTED)
 set_target_properties(delto_gripper_helper PROPERTIES
-  IMPORTED_LOCATION ${CMAKE_CURRENT_SOURCE_DIR}/lib/libdelto_gripper_helper.so
+  IMPORTED_LOCATION ${GRIPPER_HELPER_LIB}
 )
 
 # Build the hardware interface library
