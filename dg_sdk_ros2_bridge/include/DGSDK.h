@@ -218,9 +218,20 @@ extern "C"
 	///		DG_RESULT_SYSTEM_SETTING_NOT_PERFORMED						No system setup
 	///		DG_RESULT_DIAGNOSING_SYSTEM										Running diagnostic mode
 	///		DG_RESULT_DATA_IS_NOT_BOOLEAN									Only 0 and 1 can be entered
+	// NOTE: the vendor x86_64 build (libDGSDK_171.so) exports these two functions
+	// under the misspelled names "SetGPIOOuput"/"SetGPIOOuputAll". The aarch64 build
+	// (libs/aarch64/libDGSDK.so) exports the corrected spelling "SetGPIOOutput"/
+	// "SetGPIOOutputAll" instead, with no misspelled symbol present. Alias the
+	// correct name back onto the name used throughout this codebase so callers
+	// don't need arch-specific code.
+#if defined(__aarch64__) || defined(__arm64__)
+	DGSDK DG_RESULT SetGPIOOutput(int gpio, int outputNumber);
+	#define SetGPIOOuput SetGPIOOutput
+#else
 	DGSDK DG_RESULT SetGPIOOuput(int gpio, int outputNumber);
+#endif
 
-	/// @ brief Sets the gripper global GPIO output. 
+	/// @ brief Sets the gripper global GPIO output.
 	/// @ param
 	///		#Data Types					#Variables									#Description
 	///		int*								gpio											Set output values
@@ -230,7 +241,12 @@ extern "C"
 	///		DG_RESULT_SYSTEM_SETTING_NOT_PERFORMED						No system setup
 	///		DG_RESULT_DIAGNOSING_SYSTEM										Running diagnostic mode
 	///		DG_RESULT_DATA_IS_NOT_BOOLEAN									Only 0 and 1 can be entered
+#if defined(__aarch64__) || defined(__arm64__)
+	DGSDK DG_RESULT SetGPIOOutputAll(int* output);
+	#define SetGPIOOuputAll SetGPIOOutputAll
+#else
 	DGSDK DG_RESULT SetGPIOOuputAll(int* output);
+#endif
 
 	/// @ brief Set the torque limit mode for the gripper.
 	/// @ param
@@ -969,7 +985,7 @@ extern "C"
 	///		DG_RESULT_VALUE_IS_NEGATIVE											Cannot enter negative values
 	DGSDK DG_RESULT SetTCPGainDAll(float* gainD);
 
-	/// @ brief Sets the maximum I-gain and error integral for one finger for gripper¡¯s TCP position control.
+	/// @ brief Sets the maximum I-gain and error integral for one finger for gripperï¿½ï¿½s TCP position control.
 	/// @ param
 	///		#Data Types					#Variables									#Description
 	///		float*								gainI											Enter the I gain
@@ -985,7 +1001,7 @@ extern "C"
 	///		DG_RESULT_OVERFLOW_FINGER_COUNT								Finger number entry error
 	DGSDK DG_RESULT SetTCPGainIFinger(float* gainI, float* iLimit, int fingerNumber);
 
-	/// @ brief Sets the maximum I-gain and error integral for one finger for gripper¡¯s TCP position control.
+	/// @ brief Sets the maximum I-gain and error integral for one finger for gripperï¿½ï¿½s TCP position control.
 	/// @ param
 	///		#Data Types					#Variables									#Description
 	///		float*								gainI											Enter the I gain
@@ -1137,7 +1153,7 @@ extern "C"
 	///				This function is only supported by DG-3F-B and DG-3F-M
 	/// @ param
 	///		#Data Types					#Variables									#Description
-	///		float*								targetOffset									Offset to move the grasped object by (mm)(¥ÄX, ¥ÄY, ¥ÄZ, ¥ÄRX, ¥ÄRY, ¥ÄRZ)
+	///		float*								targetOffset									Offset to move the grasped object by (mm)(ï¿½ï¿½X, ï¿½ï¿½Y, ï¿½ï¿½Z, ï¿½ï¿½RX, ï¿½ï¿½RY, ï¿½ï¿½RZ)
 	///		int									motionTime									Set offset travel time(ms)
 	/// @ returns	
 	/// 	#Value																			#Description
