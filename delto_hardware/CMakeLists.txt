@@ -79,6 +79,11 @@ install(
   DESTINATION share/${PROJECT_NAME}
 )
 
+install(
+  FILES ${GRIPPER_HELPER_LIB}
+  DESTINATION lib
+)
+
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})
 ament_export_targets(export_${PROJECT_NAME})
