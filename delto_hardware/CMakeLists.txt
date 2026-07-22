@@ -27,10 +27,15 @@ else()
   message(FATAL_ERROR "delto_hardware: no vendor delto_gripper_helper library for architecture '${CMAKE_SYSTEM_PROCESSOR}'")
 endif()
 
-# Import delto_gripper_helper library (shared across all drivers)
+# Import delto_gripper_helper library (shared across all drivers).
+# The vendor .so ships without an embedded SONAME, so IMPORTED_NO_SONAME
+# tells CMake to link it by name (-l) instead of embedding this source-tree
+# path in consumers' DT_NEEDED, which would otherwise break once the source
+# directory is removed post-install.
 add_library(delto_gripper_helper SHARED IMPORTED)
 set_target_properties(delto_gripper_helper PROPERTIES
   IMPORTED_LOCATION ${GRIPPER_HELPER_LIB}
+  IMPORTED_NO_SONAME TRUE
 )
 
 # Build the hardware interface library
@@ -55,6 +60,13 @@ ament_target_dependencies(${PROJECT_NAME}
 target_link_libraries(${PROJECT_NAME}
   delto_gripper_helper
   Boost::system
+)
+
+# delto_gripper_helper installs alongside this library in lib/, so point the
+# runtime loader there via $ORIGIN instead of relying on the (post-install
+# deleted) source-tree path baked in at build time.
+set_target_properties(${PROJECT_NAME} PROPERTIES
+  INSTALL_RPATH "$ORIGIN"
 )
 
 # Export hardware plugins
