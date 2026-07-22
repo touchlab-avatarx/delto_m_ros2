@@ -493,6 +493,9 @@ SystemInterface::on_shutdown(
   RCLCPP_INFO(rclcpp::get_logger("SystemInterface"), "Shutting down driver...");
   
   if (delto_client_) {
+    std::vector<int> int_duty(effort_commands_.size());
+    int_duty.assign(effort_commands_.size(), 0);
+    delto_client_->SendDuty(int_duty);
     delto_client_->Disconnect();
   }
   is_connected_.store(false);
